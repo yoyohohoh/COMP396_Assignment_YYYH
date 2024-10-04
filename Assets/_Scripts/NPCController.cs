@@ -45,31 +45,68 @@ public class NPCController : MonoBehaviour
     private void UpdateSense()
     {
         elapsedTime += Time.deltaTime;
-        
-        if (elapsedTime >= detectionRate && this.GetComponent<SimpleFSM>().currentState != SimpleFSM.NPCState.Idle)
+        if(this.GetComponent<SimpleFSM>() != null)
         {
-            DetectAspect();
-            elapsedTime = 0.0f;
+            if (elapsedTime >= detectionRate && this.GetComponent<SimpleFSM>().currentState != SimpleFSM.NPCState.Idle)
+            {
+                DetectAspect();
+                elapsedTime = 0.0f;
+            }
         }
+        else if (this.GetComponent<FactoryDesignPattern>() != null)
+        {
+            if (elapsedTime >= detectionRate && this.GetComponent <FactoryDesignPattern>().IsIdling == false )
+            {
+                DetectAspect();
+                elapsedTime = 0.0f;
+            }
+        }
+
+
     }
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.gameObject.CompareTag("Player"))
+        if (this.GetComponent<SimpleFSM>() != null)
         {
-            this.GetComponent<SimpleFSM>().IsPlayerInRange = true;
-            if(this.GetComponent<SimpleFSM>().currentState == SimpleFSM.NPCState.Attack)
+            if (other.gameObject.CompareTag("Player"))
             {
-                playerHealth -= 10;
+                this.GetComponent<SimpleFSM>().IsPlayerInRange = true;
+                if (this.GetComponent<SimpleFSM>().currentState == SimpleFSM.NPCState.Attack)
+                {
+                    playerHealth -= 10;
+                }
+            }
+        }
+        else if (this.GetComponent<FactoryDesignPattern>() != null)
+        {
+            if (other.gameObject.CompareTag("Player"))
+            {
+                this.GetComponent<FactoryDesignPattern>().IsPlayerInRange = true;
+                if (this.GetComponent<FactoryDesignPattern>().IsAttaking == true)
+                {
+                    playerHealth -= 10;
+                }
             }
         }
     }
 
     private void OnTriggerExit(Collider other)
     {
-        if (other.gameObject.CompareTag("Player"))
+        
+        if (this.GetComponent<SimpleFSM>() != null)
         {
-            this.GetComponent<SimpleFSM>().IsPlayerInRange = false;
+            if (other.gameObject.CompareTag("Player"))
+            {
+                this.GetComponent<SimpleFSM>().IsPlayerInRange = false;
+            }
+        }
+        else if (this.GetComponent<FactoryDesignPattern>() != null)
+        {
+            if (other.gameObject.CompareTag("Player"))
+            {
+                this.GetComponent<FactoryDesignPattern>().IsPlayerInRange = false;
+            }
         }
     }
 
@@ -89,14 +126,29 @@ public class NPCController : MonoBehaviour
                     if (aspect.affiliation == targetAffiliation)
                     {
                         Debug.Log("Player Detected");
-                        this.GetComponent<SimpleFSM>().IsPlayerDetected = true;
+                        
+                        if (this.GetComponent<SimpleFSM>() != null)
+                        {
+                            this.GetComponent<SimpleFSM>().IsPlayerDetected = true;
+                        }
+                        else if (this.GetComponent<FactoryDesignPattern>() != null)
+                        {
+                            this.GetComponent<FactoryDesignPattern>().IsPlayerDetected = true;
+                        }
                     }
                 }
             }
         }
         else
         {
-            this.GetComponent<SimpleFSM>().IsPlayerDetected = false;
+            if (this.GetComponent<SimpleFSM>() != null)
+            {
+                this.GetComponent<SimpleFSM>().IsPlayerDetected = false;
+            }
+            else if (this.GetComponent<FactoryDesignPattern>() != null)
+            {
+                this.GetComponent<FactoryDesignPattern>().IsPlayerDetected = false;
+            }
         }
         
     }
